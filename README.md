@@ -2,6 +2,7 @@
 
 In your specs.watchr file just add:
 
+    require 'rspec-rails-watchr'
     @specs_watchr ||= Rspec::Rails::Watchr.new(self)
 
 Then launch `watchr` as usual (probably `bundle exec watchr`).
