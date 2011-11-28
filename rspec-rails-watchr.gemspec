@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# coding: utf-8
+
 $:.push File.expand_path("../lib", __FILE__)
 require "rspec-rails-watchr/version"
 
@@ -19,7 +20,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = %w[lib]
   
-  s.add_dependency 'watchr'
+  s.add_dependency 'rb-fsevent'
   s.add_dependency 'term-ansicolor'
   s.add_dependency 'notify'
 end

@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+# coding: utf-8
+
+require 'rb-fsevent'
+
+
+class Peepr
+  def watch regexp, &block
+    @rules ||= []
+    @rules << [regexp, block]
+  end
+  attr_reader :rules
+end
+
+peepr = Peepr.new
+fsevent = FSEvent.new
+Rspec::Rails::Watchr.new(peepr)
+
+fsevent.watch Dir.pwd do |directories|
+  puts "Detected change inside: #{directories.inspect}"
+end
+
+fsevent.run
