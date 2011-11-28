@@ -2,7 +2,7 @@
 # coding: utf-8
 
 require 'rb-fsevent'
-
+require 'rspec-rails-watchr'
 
 class Peepr
   def watch regexp, &block
@@ -10,14 +10,56 @@ class Peepr
     @rules << [regexp, block]
   end
   attr_reader :rules
+  
+  
+  def set_files files
+    files.each do |file|
+      changed? file
+    end
+  end
+  
+  def changed? file
+    @files ||= {}
+    mtime   = File.mtime(file)
+    changed = (@files[file] and @files[file] < mtime)
+    @files[file] = mtime
+    return changed
+  end
 end
 
-peepr = Peepr.new
+peepr   = Peepr.new
 fsevent = FSEvent.new
-Rspec::Rails::Watchr.new(peepr)
+watchr  = SpecWatchr.new(peepr)
+
+def watchr.reload!
+end
+
+peepr.set_files Dir[File.join(Dir.pwd, '{app,spec,lib,script}/**/*')]
 
 fsevent.watch Dir.pwd do |directories|
-  puts "Detected change inside: #{directories.inspect}"
+  
+  directories.each do |directory|
+    # puts "Detected change inside: #{directory}"
+    pwd = Pathname(Dir.pwd)
+    
+    Dir[File.join(directory, '/**/*')].each do |file|
+      # puts "checking: #{file}"
+      if peepr.changed? file
+        file = Pathname(file).relative_path_from(pwd).to_s
+        # puts "CHANGED!"
+        peepr.rules.each do |(regexp, action)|
+          # puts "RULE: #{regexp} =~ #{file} => #{action.inspect}"
+          regexp = Regexp.new(regexp)
+          if file =~ regexp
+            m = regexp.match(file)
+            # puts "CALLING!"
+            action.call(m)
+          end
+        end
+      end
+    end
+  end
+  
 end
 
 fsevent.run
