@@ -4,7 +4,7 @@ $:.push File.expand_path("../lib", __FILE__)
 require "rspec-rails-watchr/version"
 
 Gem::Specification.new do |s|
-  s.name        = 'rspec-rails-watchr'
+  s.name        = 'spectator'
   s.version     = Rspec::Rails::Watchr::VERSION
   s.authors     = %w[Elia Schito]
   s.email       = %w[perlelia@gmail.com]
