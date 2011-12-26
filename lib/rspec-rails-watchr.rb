@@ -86,7 +86,7 @@ class SpecWatchr
 
     def reload!
       # puts ARGV.join(' ')
-      exec('bundle exec watchr')
+      exec('bundle exec ' << $0)
     end
 
     def reload_file_list
