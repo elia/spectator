@@ -23,4 +23,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'rb-fsevent'
   s.add_dependency 'term-ansicolor'
   s.add_dependency 'notify'
+  s.add_development_dependency 'rake',    '~> 0.9'
+  s.add_development_dependency 'bundler', '~> 1.0'
 end
