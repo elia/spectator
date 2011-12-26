@@ -1,11 +1,11 @@
 # coding: utf-8
 
 $:.push File.expand_path('../lib', __FILE__)
-require 'rspec-rails-watchr/version'
+require 'spectator/version'
 
 Gem::Specification.new do |s|
   s.name        = 'spectator'
-  s.version     = Rspec::Rails::Watchr::VERSION
+  s.version     = Spectator::VERSION
   s.authors     = %w[Elia Schito]
   s.email       = %w[perlelia@gmail.com]
   s.homepage    = ''

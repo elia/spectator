@@ -1,0 +1,3 @@
+module Spectator
+  VERSION = '0.1'
+end
