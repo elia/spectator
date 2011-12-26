@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.authors     = %w[Elia Schito]
   s.email       = %w[perlelia@gmail.com]
   s.homepage    = ''
-  s.summary     = %q{Watches specs for a Rails (2 or 3) project}
-  s.description = %q{Watches specs for a Rails (2 or 3) project}
+  s.summary     = %q{Watches specs for a Ruby (1.8 or 1.9) or Rails (2 or 3) project}
+  s.description = %q{Watches specs for a Ruby (1.8 or 1.9) or Rails (2 or 3) project}
   s.license     = 'MIT'
 
   s.rubyforge_project = 'rspec-rails-watchr'
