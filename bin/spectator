@@ -21,6 +21,7 @@ class Peepr
   
   def changed? file
     @files ||= {}
+    return false unless File.exists? file
     mtime   = File.mtime(file)
     changed = (@files[file] and @files[file] < mtime)
     @files[file] = mtime
