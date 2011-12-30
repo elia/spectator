@@ -3,6 +3,7 @@
 
 require 'rb-fsevent'
 require 'rspec-rails-watchr'
+require 'pathname'
 
 class Peepr
   def watch regexp, &block
