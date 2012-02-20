@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = %w[lib]
   
-  s.add_dependency 'rb-fsevent'
+  s.add_dependency 'fssm'
   s.add_dependency 'term-ansicolor'
   s.add_dependency 'notify'
   s.add_development_dependency 'rake',    '~> 0.9'

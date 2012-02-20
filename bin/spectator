@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 
-require 'rb-fsevent'
+require 'fssm'
 require 'rspec-rails-watchr'
 require 'pathname'
 
@@ -30,7 +30,7 @@ class Peepr
 end
 
 peepr   = Peepr.new
-fsevent = FSEvent.new
+# fsevent = FSEvent .new
 watchr  = SpecWatchr.new(peepr)
 
 def watchr.reload!
@@ -38,30 +38,19 @@ end
 
 peepr.set_files Dir[File.join(Dir.pwd, '{app,spec,lib,script}/**/*')]
 
-fsevent.watch Dir.pwd do |directories|
-  
-  directories.each do |directory|
-    # puts "Detected change inside: #{directory}"
-    pwd = Pathname(Dir.pwd)
-    
-    Dir[File.join(directory, '/**/*')].each do |file|
-      # puts "checking: #{file}"
-      if peepr.changed? file
-        file = Pathname(file).relative_path_from(pwd).to_s
-        # puts "CHANGED!"
-        peepr.rules.each do |(regexp, action)|
-          # puts "RULE: #{regexp} =~ #{file} => #{action.inspect}"
-          regexp = Regexp.new(regexp)
-          if file =~ regexp
-            m = regexp.match(file)
-            # puts "CALLING!"
-            action.call(m)
-          end
-        end
-      end
+launcher = lambda do |_, file|
+  peepr.rules.each do |(regexp, action)|
+    regexp = Regexp.new(regexp)
+    if file =~ regexp
+      m = regexp.match(file)
+      action.call(m)
     end
   end
-  
 end
 
-fsevent.run
+
+FSSM.monitor(Dir.pwd, '{app,spec,lib,script}/**/*') do
+  update {|base, relative| launcher(base, relative) }
+  create {|base, relative| launcher(base, relative) }
+  delete {|base, relative| '''do nothing'''         }
+end
