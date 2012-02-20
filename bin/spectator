@@ -38,7 +38,9 @@ end
 
 peepr.set_files Dir[File.join(Dir.pwd, '{app,spec,lib,script}/**/*')]
 
-launcher = lambda do |_, file|
+
+
+$launcher = lambda do |_, file|
   peepr.rules.each do |(regexp, action)|
     regexp = Regexp.new(regexp)
     if file =~ regexp
@@ -48,9 +50,8 @@ launcher = lambda do |_, file|
   end
 end
 
-
 FSSM.monitor(Dir.pwd, '{app,spec,lib,script}/**/*') do
-  update {|base, relative| launcher(base, relative) }
-  create {|base, relative| launcher(base, relative) }
+  update {|base, relative| $launcher[base, relative] }
+  create {|base, relative| $launcher[base, relative] }
   delete {|base, relative| '''do nothing'''         }
 end
