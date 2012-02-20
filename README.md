@@ -2,7 +2,11 @@
 
 In your specs.watchr file just add:
 
+```ruby
+    require 'rspec-rails-watchr'
+    
     @specs_watchr ||= Rspec::Rails::Watchr.new(self)
+```
 
 Then launch `watchr` as usual (probably `bundle exec watchr`).
 
@@ -19,6 +23,7 @@ you get the following prompt:
 
 If you want to override some path matching:
 
+```ruby
     @specs_watchr ||= Rspec::Rails::Watchr.new(self) do |path, specs|
       case path
       when %r{lib/calibration_with_coefficients}
@@ -27,7 +32,7 @@ If you want to override some path matching:
         specs.grep(%r{models/telemetry_parameter})
       end
     end
-
+```
 
 
 
