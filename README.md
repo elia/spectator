@@ -1,14 +1,6 @@
 # Usage
 
-In your specs.watchr file just add:
-
-```ruby
-    require 'rspec-rails-watchr'
-    
-    @specs_watchr ||= Rspec::Rails::Watchr.new(self)
-```
-
-Then launch `watchr` as usual (probably `bundle exec watchr`).
+Launch `spectator` as usual (probably `bundle exec spectator`).
 
 ## Instructions
 
@@ -19,12 +11,12 @@ you get the following prompt:
     ^C (Interrupted with CTRL+C)
     --- What to do now? (q=quit, a=all-specs, r=reload): 
 
-## Advanced
+## Advanced (upcoming!)
 
 If you want to override some path matching:
 
 ```ruby
-    @specs_watchr ||= Rspec::Rails::Watchr.new(self) do |path, specs|
+    spectate do
       case path
       when %r{lib/calibration_with_coefficients}
         specs.grep(%r{models/(logarithmic|polynomial)_calibration})
@@ -36,4 +28,4 @@ If you want to override some path matching:
 
 
 
-Copyright (c) 2011 Elia Schito, released under the MIT license
+Copyright (c) 2011-2012 Elia Schito, released under the [MIT license](https://github.com/elia/spectator/blob/master/MIT-LICENSE)
