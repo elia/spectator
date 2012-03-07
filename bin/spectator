@@ -1,6 +1,13 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 
+
+if %w[--help help -h].include? ARGV.first
+  echo "Spectator doesn't take any arguments, to run the whole suite hit CTRL-C, type 'a' and press ENTER."
+  exit
+end
+
+
 require 'fssm'
 require 'rspec-rails-watchr'
 require 'pathname'
