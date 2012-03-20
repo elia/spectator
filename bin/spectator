@@ -7,58 +7,6 @@ if %w[--help help -h].include? ARGV.first
   exit
 end
 
+require 'spectator'
 
-require 'fssm'
-require 'rspec-rails-watchr'
-require 'pathname'
-
-class Peepr
-  def watch regexp, &block
-    @rules ||= []
-    @rules << [regexp, block]
-  end
-  attr_reader :rules
-  
-  
-  def set_files files
-    files.each do |file|
-      changed? file
-    end
-  end
-  
-  def changed? file
-    @files ||= {}
-    return false unless File.exists? file
-    mtime   = File.mtime(file)
-    changed = (@files[file] and @files[file] < mtime)
-    @files[file] = mtime
-    return changed
-  end
-end
-
-peepr   = Peepr.new
-# fsevent = FSEvent .new
-watchr  = SpecWatchr.new(peepr)
-
-def watchr.reload!
-end
-
-peepr.set_files Dir[File.join(Dir.pwd, '{app,spec,lib,script}/**/*')]
-
-
-
-$launcher = lambda do |_, file|
-  peepr.rules.each do |(regexp, action)|
-    regexp = Regexp.new(regexp)
-    if file =~ regexp
-      m = regexp.match(file)
-      action.call(m)
-    end
-  end
-end
-
-FSSM.monitor(Dir.pwd, '{app,spec,lib,script}/**/*') do
-  update {|base, relative| $launcher[base, relative] }
-  create {|base, relative| $launcher[base, relative] }
-  delete {|base, relative| '''do nothing'''         }
-end
+Spectator.run
