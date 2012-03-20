@@ -1,3 +1,3 @@
 module Spectator
-  VERSION = '1.1.a4'
+  VERSION = '1.2'
 end
