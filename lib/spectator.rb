@@ -67,7 +67,7 @@ module Spectator
           end.flatten
         end
         
-        rspec_files specs
+        rspec_files specs.to_a
       end
     end
     
