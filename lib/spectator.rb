@@ -28,9 +28,9 @@ module Spectator
     
     def watch_paths!
       FSSM.monitor(Dir.pwd, '{app,spec,lib,script}/**/*') do |monitor|
-        monitor.update {|base, relative| puts relative; queue.push relative }
-        monitor.create {|base, relative| puts relative; queue.push relative }
-        monitor.delete {|base, relative| puts relative; '''do nothing'''            }
+        monitor.update {|base, relative| queue.push relative }
+        monitor.create {|base, relative| queue.push relative }
+        monitor.delete {|base, relative| '''do nothing'''            }
       end
     end
     
@@ -58,16 +58,19 @@ module Spectator
         queue.size.times do
           files << queue.pop
         end
-
+        
+        files.compact!
+        redo if files.empty?
+        
+        
         specs = Set.new
         files.each do |file|
-          specs += matchers.map do |matcher|
-            file_signature = $1.gsub(/\.rb$/,'') if matcher =~ file
-            specs_for file
-          end.flatten
+          matched = matchers.map do |matcher|
+            file.scan(matcher).flatten.first.to_s.gsub(/\.rb$/,'')
+          end.flatten.reject(&:empty?)
+          specs += matched.uniq.map { |m| specs_for(m) }.flatten
         end
-        
-        rspec_files specs.to_a
+        rspec_files *specs.to_a
       end
     end
     
@@ -79,6 +82,7 @@ module Spectator
       matchers << %r{^(?:app|lib|script)/(.*)(?:\.rb|\.\w+|)$}
 
       trap_int!
+      Thread.abort_on_exception = true
       @runner  = Thread.new { wait_for_changes }
       watch_paths!
     end
