@@ -28,7 +28,7 @@ module Spectator
     
     def watch_paths!
       listener = Listen.to(Dir.pwd, :relative_paths => true)
-      listener.filter %r{/(app,spec,lib,script)/}
+      listener.filter %r{^(app|spec|lib|script)/}
       listener.change do  |modified, added, removed|
         [modified, added].flatten.each { |relative| queue.push relative }
       end
