@@ -2,7 +2,7 @@
 
 require 'term/ansicolor'
 require 'thread'
-require 'fssm'
+require 'listen'
 require 'set'
 
 require 'spectator/version'
@@ -27,11 +27,13 @@ module Spectator
     end
     
     def watch_paths!
-      FSSM.monitor(Dir.pwd, '{app,spec,lib,script}/**/*') do |monitor|
-        monitor.update {|base, relative| queue.push relative }
-        monitor.create {|base, relative| queue.push relative }
-        monitor.delete {|base, relative| '''do nothing'''            }
+      listener = Listen.to(Dir.pwd, :relative_paths => true)
+      listener.filter %r{^(app|spec|lib|script)/}
+      listener.change do  |modified, added, removed|
+        [modified, added].flatten.each { |relative| queue.push relative }
       end
+      listener.start(false)
+      sleep
     end
     
     def puts *args
