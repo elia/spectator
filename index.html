@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Spectator by elia</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Spectator</h1>
+        <p>Test driven development red-green cycle for simple people!</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/elia/spectator" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/elia/spectator/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/elia/spectator/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h2>The gist</h2>
+
+<p>Spectator is a simple watcher for your specs:</p>
+
+<ul>
+<li>it will execute a spec each time a file (spec or implementation) is modified or created (<em>really catches new files!</em>)</li>
+<li>it <strong>does not</strong> starts your whole suite at start, nor when a spec passes or fails (as autospec tends to do)</li>
+<li>
+<em>if you ask</em> it runs the whole spec suite</li>
+</ul><blockquote>
+<p>Started as a custom <a href="https://github.com/mynyml/watchr">Watchr</a> script <strong>Spectator</strong> has grown up to a tiny gem!</p>
+</blockquote>
+
+<h3>Compatibility</h3>
+
+<p>Works with RSpec-1 and RSpec-2 (looks for a <code>.rspec</code> file in the project root).</p>
+
+<h2>Usage</h2>
+
+<p>Launch <code>spectator</code> in a terminal and go back to code!</p>
+
+<p>The normal behavior is similar to <code>autotest --fast-start --no-full-after-failed</code> 
+but gives the user a bit more control over execution. By hitting CTRL+C (or CMD+. on OSX)
+you get the following prompt:</p>
+
+<pre><code>^C (Interrupted with CTRL+C)
+--- What to do now? (q=quit, a=all-specs): 
+</code></pre>
+
+<p>Type <code>q</code> and <code>ENTER</code> (or <code>CTRL+C</code> again) to quit.</p>
+
+<p>Type <code>a</code> and <code>ENTER</code> (or <code>CTRL+C</code> again) to execute the whole suite of specs.</p>
+
+<h2>Advanced (upcoming!)</h2>
+
+<p>If you want to override some path matching:</p>
+
+<div class="highlight">
+<pre><span class="n">spectate</span> <span class="k">do</span>
+  <span class="k">case</span> <span class="n">path</span>
+  <span class="k">when</span> <span class="sr">%r{lib/calibration_with_coefficients}</span>
+    <span class="n">specs</span><span class="o">.</span><span class="n">grep</span><span class="p">(</span><span class="sr">%r{models/(logarithmic|polynomial)_calibration}</span><span class="p">)</span>
+  <span class="k">when</span> <span class="sr">%r{app/models/telemetry_parameter}</span>
+    <span class="n">specs</span><span class="o">.</span><span class="n">grep</span><span class="p">(</span><span class="sr">%r{models/telemetry_parameter}</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>Copyright © 2011-2012 Elia Schito, released under the <a href="https://github.com/elia/spectator/blob/master/MIT-LICENSE">MIT license</a></p>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/elia">elia</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-7137430-8");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
