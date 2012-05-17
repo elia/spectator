@@ -1,7 +1,7 @@
 module Spectator
   module CommandLine
     def terminal_columns
-      cols = `stty -a 2&>1`.scan(/ (\d+) columns/).flatten.first
+      cols = `stty -a 2>&1`.scan(/ (\d+) columns/).flatten.first
       $?.success? ? cols.to_i : 0
     end
 
