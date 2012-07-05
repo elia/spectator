@@ -17,12 +17,13 @@ module Spectator
       @interrupted ||= false
 
       Signal.trap('INT') do
-        puts  ' (Interrupted with CTRL+C)'.red
+        puts ' (Interrupted with CTRL+C)'.red
         if @interrupted
           @exiting ? abort! : exit
         else
           @interrupted = true
           print '--- What to do now? (q=quit, a=all-specs): '.yellow
+          $stdout.flush
           case STDIN.gets.chomp.strip.downcase
           when 'q'; @interrupted = false; exit
           when 'a'; @interrupted = false; rspec_all
