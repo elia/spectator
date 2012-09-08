@@ -1,5 +1,7 @@
 # Spectator
 
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/elia/spectator)
+
 _Test driven development red-green cycle for simple people!_
 
 ## The gist
