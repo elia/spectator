@@ -13,28 +13,35 @@ module Spectator
 
     def trap_int!
       # Ctrl-C
-
       @interrupted ||= false
+      Signal.trap('INT') { ask_what_to_do! }
+    end
 
-      Signal.trap('INT') do
-        puts ' (Interrupted with CTRL+C)'.red
-        if @interrupted
-          @exiting ? abort! : exit
+
+    private
+
+    def ask_what_to_do!
+      puts ' (Interrupted with CTRL+C)'.red
+      if @interrupted
+        @exiting ? abort! : exit
+      else
+        @interrupted = true
+        case ask('--- What to do now? (q=quit, a=all-specs): ')
+        when 'q' then @interrupted = false; exit
+        when 'a' then @interrupted = false; rspec_all
         else
-          @interrupted = true
-          print '--- What to do now? (q=quit, a=all-specs): '.yellow
-          $stdout.flush
-          case STDIN.gets.chomp.strip.downcase
-          when 'q'; @interrupted = false; exit
-          when 'a'; @interrupted = false; rspec_all
-          else
-            @interrupted = false
-            puts '--- Bad input, ignored.'.yellow
-          end
-          puts '--- Waiting for changes...'.cyan
+          @interrupted = false
+          puts '--- Bad input, ignored.'.yellow
         end
+        puts '--- Waiting for changes...'.cyan
       end
     end
-    
+
+    def ask question
+      print question.yellow
+      $stdout.flush
+      STDIN.gets.chomp.strip.downcase
+    end
+
   end
 end
