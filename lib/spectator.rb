@@ -82,7 +82,8 @@ module Spectator
           file.scan(matcher).flatten.first.to_s.gsub(/\.rb$/,'')
         end.flatten.reject(&:empty?)
         specs += matched.uniq.map { |m| specs_for(m) }.flatten
-      end.to_a
+      end
+      specs.to_a
     end
 
     def initialize &block
