@@ -76,7 +76,7 @@ module Spectator
 
     def specs_for files
       specs = Set.new
-
+      files = [files] unless files.respond_to? :each
       files.each do |file|
         matched = matchers.map do |matcher|
           file.scan(matcher).flatten.first.to_s.gsub(/\.rb$/,'')
