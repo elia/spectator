@@ -60,7 +60,7 @@ module Spectator
       puts '--- Waiting for changes...'.cyan
 
       loop do
-        sleep 0.1 while queue.empty?
+        sleep 0.1 while queue.empty? or interrupted?
 
         files = []
         queue.size.times do
@@ -70,7 +70,7 @@ module Spectator
         files.compact!
         redo if files.empty?
 
-        rspec_files *specs_for(files)
+        rspec_files(*specs_for(files))
       end
     end
 
