@@ -32,7 +32,7 @@ module Spectator
       rspec files.join(' ')
     end
 
-    def specs_for(path)
+    def specs_for_file(path)
       print "--- Searching specs for #{path.inspect}...".yellow
       specs = match_specs path, Dir['spec/**/*_spec.rb']
       puts specs.empty? ? ' nothing found.'.red : " #{specs.size} matched.".green
