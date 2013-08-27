@@ -20,9 +20,10 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = %w[lib]
 
-  s.add_dependency 'listen', '~> 1.3.0'
-  s.add_dependency 'term-ansicolor'
-  s.add_dependency 'notify'
+  s.add_dependency 'listen',          '~> 1.3.0'
+  s.add_dependency 'term-ansicolor',  '~> 1.2.2'
+  s.add_dependency 'notify',          '~> 0.5.2'
+
   s.add_development_dependency 'rake',    '~> 0.9'
   s.add_development_dependency 'bundler', '~> 1.0'
 end
