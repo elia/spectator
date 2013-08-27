@@ -19,8 +19,8 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = %w[lib]
-  
-  s.add_dependency 'listen'
+
+  s.add_dependency 'listen', '~> 1.3.0'
   s.add_dependency 'term-ansicolor'
   s.add_dependency 'notify'
   s.add_development_dependency 'rake',    '~> 0.9'

@@ -27,14 +27,20 @@ module Spectator
     end
 
     def watch_paths!
-      listener = Listen.to(Dir.pwd, :relative_paths => true)
-      listener.filter %r{^(app|spec|lib|script)/}
-      listener.change do  |modified, added, removed|
-        [modified, added].flatten.each { |relative| queue.push relative }
-      end
-      listener.start(false)
+      listener.start
       sleep
     end
+
+    def listener
+      @listener ||= begin
+        listener = Listen.to(Dir.pwd, :relative_paths => true)
+        listener = listener.filter %r{^(app|spec|lib|script)/}
+        listener = listener.change do  |modified, added, removed|
+          [modified, added].flatten.each { |relative| queue.push relative }
+        end
+      end
+    end
+
 
     def puts *args
       print args.join("\n")+"\n"
