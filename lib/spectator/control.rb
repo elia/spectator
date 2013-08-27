@@ -1,3 +1,5 @@
+require 'thread'
+
 module Spectator
   module Control
     def exit
@@ -14,27 +16,59 @@ module Spectator
     def trap_int!
       # Ctrl-C
       @interrupted ||= false
-      Signal.trap('INT') { ask_what_to_do! }
+      @signal_queue = []
+      @signals_handler = Thread.new do
+        loop do
+          sleep(0.3)
+          if signal_queue.any?
+            listener.pause
+            ask_what_to_do!
+            listener.unpause
+            Thread.pass
+            signal_queue.shift
+          end
+        end
+      end
+
+      Signal.trap('INT') do
+        abort!     if exiting?
+        start_exit if interrupted?
+        signal_queue << :int
+        puts ' (Interrupted with CTRL+C)'.red
+      end
     end
+
+    attr_reader :signal_queue
 
 
     private
 
+    def interrupted?
+      signal_queue.any?
+    end
+
     def ask_what_to_do!
-      puts ' (Interrupted with CTRL+C)'.red
-      if @interrupted
-        @exiting ? abort! : exit
+      if @exiting
+        abort!
       else
-        @interrupted = true
-        case ask('--- What to do now? (q=quit, a=all-specs): ')
-        when 'q' then @interrupted = false; exit
-        when 'a' then @interrupted = false; rspec_all
-        else
-          @interrupted = false
-          puts '--- Bad input, ignored.'.yellow
+        answer = ask('--- What to do now? (q=quit, a=all-specs): ')
+        case answer
+        when 'q' then start_exit
+        when 'a' then rspec_all
+        else puts '--- Bad input, ignored.'.yellow
         end
         puts '--- Waiting for changes...'.cyan
       end
+    end
+
+    def start_exit
+      return if exiting?
+      @exiting = true
+      exit
+    end
+
+    def exiting?
+      @exiting
     end
 
     def ask question
