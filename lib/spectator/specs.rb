@@ -29,11 +29,13 @@ module Spectator
     end
 
     def success_message
-      '♥♥ SUCCESS :) ♥♥'.freeze
+      @success_message ||= osx? ? '🎉 SUCCESS'.freeze :
+                                  '♥♥ SUCCESS :) ♥♥'.freeze
     end
 
     def failed_message
-      '♠♠ FAILED >:( ♠♠'.freeze
+      @failed_message ||= osx? ? '💔 FAILED'.freeze :
+                                 '♠♠ FAILED >:( ♠♠'.freeze
     end
 
     def rspec_all
