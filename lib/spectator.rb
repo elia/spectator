@@ -89,9 +89,10 @@ module Spectator
     def initialize &block
       yield self if block_given?
 
-
-      matchers << %r{^spec/(.*)_spec\.rb$}
-      matchers << %r{^(?:app|lib|script)/(.*)(?:\.rb|\.\w+|)$}
+      spec_dir_glob = ENV['SPEC_DIR_GLOB'] || 'spec'
+      base_dir_glob = ENV['BASE_DIR_GLOB'] || 'app|lib|script'
+      matchers << %r{^#{spec_dir_glob}/(.*)_spec\.rb$}
+      matchers << %r{^(?:#{base_dir_glob})/(.*)(?:\.rb|\.\w+|)$}
 
       trap_int!
       Thread.abort_on_exception = true

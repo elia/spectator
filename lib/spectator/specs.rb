@@ -17,15 +17,27 @@ module Spectator
       @rspec_command ||= File.exist?('./.rspec') ? 'rspec' : 'spec'
     end
 
+    def full_rspec_command
+      @full_rspec_command ||= ENV['RSPEC_COMMAND'] || "bundle exec #{rspec_command}"
+    end
+
     def rspec options
       unless options.empty?
-        success = run("bundle exec #{rspec_command} #{options}")
-        notify( success ? '♥♥ SUCCESS :) ♥♥' : '♠♠ FAILED >:( ♠♠' )
+        success = run("#{full_rspec_command} #{options}")
+        notify( success ? success_message : failed_message )
       end
     end
 
+    def success_message
+      '♥♥ SUCCESS :) ♥♥'.freeze
+    end
+
+    def failed_message
+      '♠♠ FAILED >:( ♠♠'.freeze
+    end
+
     def rspec_all
-      rspec 'spec'
+      rspec ENV['SPEC_DIR_GLOB'] || 'spec'
     end
 
     def rspec_files *files
