@@ -38,6 +38,10 @@ module Spectator
                                  '♠♠ FAILED >:( ♠♠'.freeze
     end
 
+    def osx?
+      @osx ||= RUBY_PLATFORM.include? 'darwin'
+    end
+
     def rspec_all
       rspec ENV['SPEC_DIR_GLOB'] || 'spec'
     end
