@@ -1,9 +1,19 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 
-
-if %w[--help help -h].include? ARGV.first
-  echo "Spectator doesn't take any arguments, to run the whole suite hit CTRL-C, type 'a' and press ENTER."
+usage = "Usage: spectator [yaml-config]"
+case ARGV.first
+when '-h'
+  puts usage
+when '--help', 'help'
+  puts usage
+  puts
+  puts "To control spectator hit CTRL-C while it's running."
+  puts "You'll get this prompt:"
+  puts "--- What to do now? (q=quit, a=all-specs): "
+  puts
+  puts 'Hit CTRL-C again or type "q" and then ENTER to quit.'
+  puts 'Type "a" and then ENTER to run the full spec suite.'
   exit
 end
 
