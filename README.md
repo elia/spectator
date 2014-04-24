@@ -22,12 +22,12 @@ Works with RSpec-1 and RSpec-2 (looks for a `.rspec` file in the project root).
 
 Launch `spectator` in a terminal and go back to code!
 
-The normal behavior is similar to `autotest --fast-start --no-full-after-failed` 
+The normal behavior is similar to `autotest --fast-start --no-full-after-failed`
 but gives the user a bit more control over execution. By hitting CTRL+C (or CMD+. on OSX)
 you get the following prompt:
 
     ^C (Interrupted with CTRL+C)
-    --- What to do now? (q=quit, a=all-specs): 
+    --- What to do now? (q=quit, a=all-specs):
 
 Type `q` and `ENTER` (or `CTRL+C` again) to quit.
 
@@ -38,17 +38,62 @@ Type `a` and `ENTER` (or `CTRL+C` again) to execute the whole suite of specs.
 
 If you want to override some path matching:
 
-```ruby
-spectate do
-  case path
-  when %r{lib/calibration_with_coefficients}
-    specs.grep(%r{models/(logarithmic|polynomial)_calibration})
-  when %r{app/models/telemetry_parameter}
-    specs.grep(%r{models/telemetry_parameter})
-  end
-end
+**`BASE_DIR_GLOB`:**
+
+The glob that expanded will list the directories that contains the code. **Default:**
+
+
+**`SPEC_DIR_GLOB`:**
+
+The glob that expanded will list the directories that contains the specs. **Default:**
+
+**`RSPEC_COMMAND`:**
+
+The full command that will run your specs. **Default:** `bundle exec rspec` (or `bundle exec spec` for RSpec 1.x)
+
+
+### Examples
+
+#### Inline ENV variables
+
+```shell
+# this will match lib/opal/parser.rb to spec/cli/parser.rb
+BASE_DIR_GLOB='lib/opal' SPEC_DIR_GLOB='spec/cli' spectator
 ```
 
 
+#### Exported ENV variables
+
+```shell
+export BASE_DIR_GLOB="{opal/corelib,stdlib}"
+export SPEC_DIR_GLOB="spec/{corelib,stdlib}"
+export RSPEC_COMMAND="bundle exec mspec run -t ./bin/opal -I$(dirname $(gem which mspec)) -Ilib -rmspec/opal/mspec_fixes.rb"
+spectator
+```
+
+
+#### With a `.spectator` config file
+
+```yaml
+# contents of ".spectator" file
+BASE_DIR_GLOB: 'lib/opal'
+SPEC_DIR_GLOB: 'spec/cli'
+```
+
+    spectator
+
+
+#### Specifying a custom config file
+
+```shell
+# contents of ".my-spectator-config" file
+BASE_DIR_GLOB: 'lib/opal'
+SPEC_DIR_GLOB: 'spec/cli'
+```
+
+    spectator .my-spectator-config
+
+
+## License
 
 Copyright © 2011-2012 Elia Schito, released under the [MIT license](https://github.com/elia/spectator/blob/master/MIT-LICENSE)
