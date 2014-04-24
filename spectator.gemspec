@@ -24,6 +24,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'term-ansicolor',  '~> 1.2.2'
   s.add_dependency 'notify',          '~> 0.5.2'
 
-  s.add_development_dependency 'rake',    '~> 0.9'
+  s.add_development_dependency 'rake',    '~> 10'
   s.add_development_dependency 'bundler', '~> 1.0'
 end
