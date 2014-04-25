@@ -21,7 +21,7 @@ require 'spectator'
 
 require 'yaml'
 config_file = ARGV.first || '.spectator'
-YAML.load_file(config).each do |name, value|
+YAML.load_file(config_file).each do |name, value|
   ENV[name] ||= value
 end if File.exist? config_file
 

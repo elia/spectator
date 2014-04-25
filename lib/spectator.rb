@@ -1,6 +1,7 @@
 # coding: utf-8
 
 require 'term/ansicolor'
+require 'ostruct'
 require 'thread'
 require 'listen'
 require 'set'
@@ -34,7 +35,7 @@ module Spectator
     def listener
       @listener ||= begin
         listener = Listen.to(Dir.pwd, :relative_paths => true)
-        listener = listener.filter %r{^(app|spec|lib|script)/}
+        listener = listener.filter %r{^(#{config.base_dir_regexp})/}
         listener = listener.change do  |modified, added, removed|
           [modified, added].flatten.each { |relative| queue.push relative }
         end
@@ -89,16 +90,23 @@ module Spectator
     def initialize &block
       yield self if block_given?
 
-      spec_dir_glob = ENV['SPEC_DIR_GLOB'] || 'spec'
-      base_dir_glob = ENV['BASE_DIR_GLOB'] || 'app|lib|script'
-      matchers << %r{^#{spec_dir_glob}/(.*)_spec\.rb$}
-      matchers << %r{^(?:#{base_dir_glob})/(.*)(?:\.rb|\.\w+|)$}
+      config.rspec_command   = ENV['RSPEC_COMMAND']   || 'spec'
+      config.spec_dir_regexp = ENV['SPEC_DIR_REGEXP'] || 'spec'
+      config.base_dir_regexp = ENV['BASE_DIR_REGEXP'] || 'app|lib|script'
+
+      matchers << %r{^#{config.spec_dir_regexp}/(.*)_spec\.rb$}
+      matchers << %r{^(?:#{config.base_dir_regexp})/(.*)(?:\.rb|\.\w+|)$}
 
       trap_int!
       Thread.abort_on_exception = true
       @runner  = Thread.new { wait_for_changes }
       watch_paths!
     end
+
+    def config
+      @config ||= OpenStruct.new
+    end
+
   end
 
 

@@ -18,7 +18,7 @@ module Spectator
     end
 
     def full_rspec_command
-      @full_rspec_command ||= ENV['RSPEC_COMMAND'] || "bundle exec #{rspec_command}"
+      @full_rspec_command ||= config.rspec_command || "bundle exec #{rspec_command}"
     end
 
     def rspec options
@@ -43,7 +43,7 @@ module Spectator
     end
 
     def rspec_all
-      rspec ENV['SPEC_DIR_GLOB'] || 'spec'
+      rspec config.spec_dir_regexp || 'spec'
     end
 
     def rspec_files *files
@@ -52,7 +52,7 @@ module Spectator
 
     def specs_for_file(path)
       print "--- Searching specs for #{path.inspect}...".yellow
-      specs = match_specs path, Dir['spec/**/*_spec.rb']
+      specs = match_specs path, Dir['**/*'].grep(/#{config.spec_dir_regexp}/)
       puts specs.empty? ? ' nothing found.'.red : " #{specs.size} matched.".green
       specs
     end
