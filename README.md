@@ -38,12 +38,12 @@ Type `a` and `ENTER` (or `CTRL+C` again) to execute the whole suite of specs.
 
 If you want to override some path matching:
 
-**`BASE_DIR_GLOB`:**
+**`BASE_DIR_REGEXP`:**
 
 The glob that expanded will list the directories that contains the code. **Default:**
 
 
-**`SPEC_DIR_GLOB`:**
+**`SPEC_DIR_REGEXP`:**
 
 The glob that expanded will list the directories that contains the specs. **Default:**
 
@@ -58,15 +58,15 @@ The full command that will run your specs. **Default:** `bundle exec rspec` (or 
 
 ```shell
 # this will match lib/opal/parser.rb to spec/cli/parser.rb
-BASE_DIR_GLOB='lib/opal' SPEC_DIR_GLOB='spec/cli' spectator
+BASE_DIR_REGEXP='lib/opal' SPEC_DIR_REGEXP='spec/cli' spectator
 ```
 
 
 #### Exported ENV variables
 
 ```shell
-export BASE_DIR_GLOB="{opal/corelib,stdlib}"
-export SPEC_DIR_GLOB="spec/{corelib,stdlib}"
+export BASE_DIR_REGEXP="{opal/corelib,stdlib}"
+export SPEC_DIR_REGEXP="spec/{corelib,stdlib}"
 export RSPEC_COMMAND="bundle exec mspec run -t ./bin/opal -I$(dirname $(gem which mspec)) -Ilib -rmspec/opal/mspec_fixes.rb"
 spectator
 ```
@@ -76,8 +76,8 @@ spectator
 
 ```yaml
 # contents of ".spectator" file
-BASE_DIR_GLOB: 'lib/opal'
-SPEC_DIR_GLOB: 'spec/cli'
+BASE_DIR_REGEXP: 'lib/opal'
+SPEC_DIR_REGEXP: 'spec/cli'
 ```
 
     spectator
@@ -87,8 +87,8 @@ SPEC_DIR_GLOB: 'spec/cli'
 
 ```shell
 # contents of ".my-spectator-config" file
-BASE_DIR_GLOB: 'lib/opal'
-SPEC_DIR_GLOB: 'spec/cli'
+BASE_DIR_REGEXP: 'lib/opal'
+SPEC_DIR_REGEXP: 'spec/cli'
 ```
 
     spectator .my-spectator-config
