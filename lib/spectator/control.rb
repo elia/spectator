@@ -21,11 +21,12 @@ module Spectator
         loop do
           sleep(0.3)
           if signal_queue.any?
+            signal_queue.shift
+            next if $running
             listener.pause
             ask_what_to_do!
             listener.unpause
             Thread.pass
-            signal_queue.shift
           end
         end
       end

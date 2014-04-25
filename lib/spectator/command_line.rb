@@ -6,11 +6,14 @@ module Spectator
     end
 
     def run cmd
+      $running = true
       start = Time.now
       puts "=== running: #{cmd} ".ljust(terminal_columns, '=').cyan
       success = system cmd
       puts "=== time: #{(Time.now - start).to_i} seconds ".ljust(terminal_columns, '=').cyan
       success
+    ensure
+      $running = false
     end
 
     def clear!
