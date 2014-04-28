@@ -21,11 +21,9 @@ module Spectator
       @full_rspec_command ||= config.rspec_command || "bundle exec #{rspec_command}"
     end
 
-    def rspec options
-      unless options.empty?
-        success = run("#{full_rspec_command} #{options}")
-        notify( success ? success_message : failed_message )
-      end
+    def rspec options = ''
+      success = run("#{full_rspec_command} #{options}")
+      notify( success ? success_message : failed_message )
     end
 
     def success_message
@@ -43,7 +41,7 @@ module Spectator
     end
 
     def rspec_all
-      rspec config.spec_dir_regexp || 'spec'
+      rspec
     end
 
     def rspec_files *files

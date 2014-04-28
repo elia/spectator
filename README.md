@@ -65,9 +65,9 @@ BASE_DIR_REGEXP='lib/opal' SPEC_DIR_REGEXP='spec/cli' spectator
 #### Exported ENV variables
 
 ```shell
-export BASE_DIR_REGEXP="{opal/corelib,stdlib}"
-export SPEC_DIR_REGEXP="spec/{corelib,stdlib}"
-export RSPEC_COMMAND="bundle exec mspec run -t ./bin/opal -I$(dirname $(gem which mspec)) -Ilib -rmspec/opal/mspec_fixes.rb"
+BASE_DIR_REGEXP: '(?:opal/corelib|stdlib|spec)'
+SPEC_DIR_REGEXP: '(?:spec/corelib/core|spec/stdlib/\w+/spec)'
+RSPEC_COMMAND: 'bundle exec ./bin/opal-mspec'
 spectator
 ```
 
