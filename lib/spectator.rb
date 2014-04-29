@@ -12,16 +12,29 @@ require 'spectator/ui'
 module Spectator
   extend self
 
-  def config
-    @config ||= begin
-      config = OpenStruct.new
-      config.rspec_command   = ENV['RSPEC_COMMAND']   || (File.exist?('.rspec') ? 'rspec' : 'spec')
-      config.spec_dir_regexp = ENV['SPEC_DIR_REGEXP'] || 'spec'
-      config.base_dir_regexp = ENV['BASE_DIR_REGEXP'] || 'app|lib|script'
-      config.debug = ARGV.include?('debug')
-      config
-    end
+  def config(overrides_hash = {})
+    Config.new(default_config_hash.merge(env_config_hash).merge(overrides_hash))
   end
+
+  def env_config_hash
+    config = {}
+    config[:rspec_command]   = ENV['RSPEC_COMMAND']   if ENV['RSPEC_COMMAND']
+    config[:spec_dir_regexp] = ENV['SPEC_DIR_REGEXP'] if ENV['SPEC_DIR_REGEXP']
+    config[:base_dir_regexp] = ENV['BASE_DIR_REGEXP'] if ENV['BASE_DIR_REGEXP']
+    config[:debug]           = ENV['SPECTATOR_DEBUG'] if ENV['SPECTATOR_DEBUG']
+    config
+  end
+
+  def default_config_hash
+    {
+      rspec_command:   (File.exist?('.rspec') ? 'rspec' : 'spec'),
+      spec_dir_regexp: 'spec',
+      base_dir_regexp: 'app|lib|script',
+      debug:           false,
+    }
+  end
+
+  Config = Class.new(OpenStruct)
 
   class Runner
     def initialize(config)
@@ -78,6 +91,6 @@ module Spectator
   end
 
   def run(*args, &block)
-    Runner.new(*args, &block)
+    Runner.new(*args, &block).run
   end
 end
