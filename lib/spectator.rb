@@ -5,14 +5,13 @@ require 'thread'
 require 'term/ansicolor'
 String.send :include, Term::ANSIColor
 
-$spectator_debug = ARGV.include?('--debug')
 module Kernel
   alias real_p p
-  def p *args
-    real_p *args if $spectator_debug
+  def p(*args)
+    real_p(*args) if $spectator_debug
   end
-  def p_print *args
-    print *args if $spectator_debug
+  def p_print(*args)
+    print(*args) if $spectator_debug
   end
 end
 
@@ -25,6 +24,7 @@ module Spectator
       config.rspec_command   = ENV['RSPEC_COMMAND']   || (File.exist?('.rspec') ? 'rspec' : 'spec')
       config.spec_dir_regexp = ENV['SPEC_DIR_REGEXP'] || 'spec'
       config.base_dir_regexp = ENV['BASE_DIR_REGEXP'] || 'app|lib|script'
+      config.debug = ARGV.include?('debug')
       config
     end
   end
@@ -41,15 +41,24 @@ module Spectator
     @spec_runner ||= SpecRunner.new(config)
   end
 
+  def success_notifier
+    @success_notifier ||= SuccessNotifier.new(config)
+  end
+
   def run
+    $spectator_debug = config.debug
+
     path_watcher.on_change { ui << :run_specs }
     path_watcher.watch_paths!
 
     ui.on(:run_specs) do
+      next unless ui.can_run_specs?
+
       ui.status = :running_specs
       files = path_watcher.pop_files
-      specs = SpecsMatcher.new(config, files).specs
-      spec_runner.run specs
+      specs = SpecsMatcher.new(config).specs_for(files)
+      result = ui.run spec_runner.command(specs)
+      success_notifier.notify(result)
       ui.status = nil if ui.status == :running_specs
     end
 
@@ -65,7 +74,15 @@ module Spectator
 
     trap('INT') { ui << :interrupt }
 
-    ui.on(:run_all) { spec_runner.run_all }
+    ui.on(:run_all) do
+
+      next unless ui.can_run_specs?
+      ui.status = :running_specs
+      result = ui.run(spec_runner.command)
+      success_notifier.notify(result)
+      ui.status = nil if ui.status == :running_specs
+    end
+
     ui.start
   end
 
@@ -102,12 +119,10 @@ module Spectator
 
     def watch_paths!
       listener.start
-      # sleep
     end
 
-    private
-
     attr_reader :queue, :config
+    private :queue, :config
 
     def listener
       @listener ||= begin
@@ -126,14 +141,32 @@ module Spectator
   end
 
   class SpecsMatcher
-    def initialize(config, files)
+    def initialize(config)
       @config = config
-      @files = files
+      @matchers = [
+        %r{^#{config.spec_dir_regexp}/(.*)_spec\.rb$},
+        %r{^(?:#{config.base_dir_regexp})/(.*)(?:\.rb|\.\w+|)$},
+      ]
+    end
+    attr_reader :matchers
+
+    def specs_for(files)
+      files.flat_map do |path|
+        print "--- Searching specs for #{path.inspect}...".yellow
+        specs = match_specs path
+        puts specs.empty? ? ' nothing found.'.red : " #{specs.size} matched.".green
+        specs
+      end
     end
 
-    def specs
-      # TODO
-      files.grep(/_spec.rb/)
+    def match_specs file
+      matched = matchers.map do |matcher|
+        file.scan(matcher).flatten.first.to_s.gsub(/\.rb$/,'')
+      end.flatten.reject(&:empty?)
+
+      matched.uniq.map do |path|
+        Dir['**/**'].grep(%r{^#{config.spec_dir_regexp}}).grep(/\b#{path}((_spec)?\.rb)?$/)
+      end.flatten
     end
 
     attr_reader :config, :files
@@ -159,7 +192,7 @@ module Spectator
       loop do
         if @queue.empty?
           p_print '.'
-          sleep 0.3
+          sleep $spectator_debug ? 0.3 : 0.05
         else
           event = @queue.pop
           p [:queue, event]
@@ -194,10 +227,16 @@ module Spectator
       answer = ask('--- What to do now? (q=quit, a=all-specs): ')
       case answer
       when 'q' then exit
-      when 'a' then self << :run_all
-      else puts '--- Bad input, ignored.'.yellow
+      when 'a' then run_all
+      else
+        puts '--- Bad input, ignored.'.yellow
+        wait_for_changes
       end
-      wait_for_changes
+    end
+
+    def run_all
+      self << :run_all
+      self.status = nil
     end
 
     def wait_for_changes
@@ -216,6 +255,61 @@ module Spectator
       puts '--- Exiting...'.white
       super
     end
+
+    def terminal_columns
+      cols = `stty -a 2>&1`.scan(/ (\d+) columns/).flatten.first
+      $?.success? ? cols.to_i : 80
+    end
+
+    def run cmd
+      $running = true
+      start = Time.now
+      puts "=== running: #{cmd} ".ljust(terminal_columns, '=').cyan
+      success = system cmd
+      puts "=== time: #{(Time.now - start).to_i} seconds ".ljust(terminal_columns, '=').cyan
+      success
+    ensure
+      $running = false
+    end
+
+    def can_run_specs?
+      status.nil?
+    end
+  end
+
+  class SuccessNotifier
+    require 'notify'
+
+    def initialize(config)
+      @config ||= config
+      if osx?
+        begin
+          require 'terminal-notifier'
+        rescue LoadError => e
+          $stderr.puts e.message
+          $stderr.puts 'On OSX you should use notification center: gem install terminal-notifier'.red
+        end
+      end
+    end
+
+    def notify(success)
+      message = success ? success_message : failed_message
+      Thread.new { Notify.notify 'RSpec Result:', message }
+    end
+
+    def success_message
+      @success_message ||= osx? ? '🎉 SUCCESS'.freeze :
+                                  '♥♥ SUCCESS :) ♥♥'.freeze
+    end
+
+    def failed_message
+      @failed_message ||= osx? ? '💔 FAILED'.freeze :
+                                 '♠♠ FAILED >:( ♠♠'.freeze
+    end
+
+    def osx?
+      @osx ||= RUBY_PLATFORM.include? 'darwin'
+    end
   end
 
   class SpecRunner
@@ -224,20 +318,12 @@ module Spectator
     end
     attr_reader :config
 
-    def run files
-      success = cmd("#{config.rspec_command} #{files.join(' ')}")
-      notify(success)
+    def command files = default_files
+      "#{config.rspec_command} #{files.join(' ')}"
     end
 
-    def cmd *command
-      p command
-      system *command
-    end
-
-    def notify(success)
-      p [:success, success]
-      #TODO
-      # success ? success_message : failed_message
+    def default_files
+      Dir['**/**'].grep(%r{^(?:#{config.spec_dir_regexp}\b)/?$})
     end
   end
 
