@@ -25,4 +25,5 @@ YAML.load_file(config_file).each do |name, value|
   ENV[name] ||= value
 end if File.exist? config_file
 
-Spectator.run
+config = Spectator.config(debug: ARGV.include?('debug'))
+Spectator.run(config)
