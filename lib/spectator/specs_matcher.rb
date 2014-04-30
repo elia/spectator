@@ -14,20 +14,24 @@ module Spectator
 
     def specs_for(files)
       files.flat_map do |path|
-        print "--- Searching specs for #{path.inspect}...".yellow
-        specs = match_specs path
+        matchable_paths = self.matchable_paths(path)
+        print "--- Searching specs for #{path.inspect} (as: #{matchable_paths.join(", ")})...".yellow
+        specs = match_specs(matchable_paths)
         puts specs.empty? ? ' nothing found.'.red : " #{specs.size} matched.".green
         specs
       end
     end
 
-    def match_specs file
-      matched = matchers.map do |matcher|
+    def matchable_paths(file)
+      matchers.map do |matcher|
         file.scan(matcher).flatten.first.to_s.gsub(/\.rb$/,'')
       end.flatten.reject(&:empty?)
+    end
 
-      matched.uniq.map do |path|
-        Dir['**/**'].grep(%r{^#{config.spec_dir_regexp}}).grep(/\b#{path}((_spec)?\.rb)?$/)
+    def match_specs matchable_paths
+      matchable_paths.uniq.map do |path|
+        # Dir['**/**'].grep(%r{^#{config.spec_dir_regexp}}).grep(/\b#{path}((_spec)?\.rb)?$/)
+        Dir['**/**'].grep(%r{^#{config.spec_dir_regexp}}).grep(/\b#{path}_spec\.rb$/)
       end.flatten
     end
 
