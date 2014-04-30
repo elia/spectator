@@ -19,20 +19,19 @@ module Spectator
     end
 
     def start
-      queue = @queue
-      mutex = @mutex
-
-      thread = Thread.new do
-        loop do
-          wait_for_changes
-          event = queue.pop
-          p [:queue, event]
-          mutex.synchronize { @callbacks[event].call }
-        end
-      end
+      wait_for_changes
+      thread = Thread.new { event_loop }
       p thread
       Thread.pass
       sleep
+    end
+
+    def event_loop
+      loop do
+        event = @queue.pop
+        p [:queue, event]
+        @mutex.synchronize { @callbacks[event].call }
+      end
     end
 
     attr_reader :status
