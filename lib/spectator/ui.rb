@@ -48,6 +48,13 @@ module Spectator
       @noop ||= OpenStruct.new(call: nil)
     end
 
+    def interrupt!
+      self.interrupted_status = status
+      self << :interrupt
+    end
+
+    attr_accessor :interrupted_status
+
     def on_status status, &block
       @status_callbacks[status] = block
     end

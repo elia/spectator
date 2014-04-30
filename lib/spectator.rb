@@ -68,15 +68,16 @@ module Spectator
 
       ui.on(:interrupt) do
         puts ' (Interrupted with CTRL+C)'.red
-        case ui.status
+        p [ui.status, ui.interrupted_status]
+        case ui.interrupted_status
         when :wait_for_input then ui.exit
-        when :running_specs  then ui.noop
+        when :running_specs  then ui.wait_for_changes
         when :exiting        then Kernel.abort
         else Thread.new { ui.ask_what_to_do }
         end
       end
 
-      trap('INT') { ui << :interrupt }
+      trap('INT') { ui.interrupt! }
 
       ui.on(:run_all) do
         next unless ui.can_run_specs?
