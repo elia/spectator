@@ -45,7 +45,7 @@ module Spectator
     end
 
     def noop
-      @noop ||= OpenStruct.new(call: nil)
+      @noop ||= lambda {}
     end
 
     def interrupt!
@@ -76,12 +76,13 @@ module Spectator
     end
 
     def run_all
+      self.status = :waiting_for_changes
       self << :run_all
-      self.status = nil
     end
 
     def wait_for_changes
-      self.status = nil
+      return if status == :waiting_for_changes
+      self.status = :waiting_for_changes
       puts '--- Waiting for changes...'.cyan
     end
 
@@ -114,7 +115,8 @@ module Spectator
     end
 
     def can_run_specs?
-      status.nil?
+      p [:can_run_specs?, status]
+      status == :waiting_for_changes
     end
   end
 end
