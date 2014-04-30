@@ -6,7 +6,6 @@ module Spectator
   class UI
     def initialize(config)
       @mutex = Mutex.new
-      @status_mutex = Mutex.new
       @status = nil
       @status_callbacks = {}
       @callbacks = {}
@@ -26,22 +25,7 @@ module Spectator
       sleep
     end
 
-    def event_loop
-      loop do
-        event = @queue.pop
-        p [:queue, event]
-        @mutex.synchronize { @callbacks[event].call }
-      end
-    end
-
-    attr_reader :status
-
-    def status= status
-      @status_mutex.synchronize do
-        @status = status
-        (@status_callbacks[status] || noop).call
-      end
-    end
+    attr_accessor :status
 
     def noop
       @noop ||= lambda {}
@@ -53,10 +37,6 @@ module Spectator
     end
 
     attr_accessor :interrupted_status
-
-    def on_status status, &block
-      @status_callbacks[status] = block
-    end
 
     def on event, &block
       @callbacks[event] = block
@@ -97,11 +77,6 @@ module Spectator
       super
     end
 
-    def terminal_columns
-      cols = `stty -a 2>&1`.scan(/ (\d+) columns/).flatten.first
-      $?.success? ? cols.to_i : 80
-    end
-
     def run cmd
       $running = true
       start = Time.now
@@ -117,5 +92,22 @@ module Spectator
       p [:can_run_specs?, status]
       status == :waiting_for_changes
     end
+
+
+    private
+
+    def terminal_columns
+      cols = `stty -a 2>&1`.scan(/ (\d+) columns/).flatten.first
+      $?.success? ? cols.to_i : 80
+    end
+
+    def event_loop
+      loop do
+        event = @queue.pop
+        p [:queue, event]
+        @mutex.synchronize { @callbacks[event].call }
+      end
+    end
+
   end
 end
