@@ -19,17 +19,20 @@ module Spectator
     end
 
     def start
-      wait_for_changes
-      loop do
-        if @queue.empty?
-          p_print '.'
-          sleep $spectator_debug ? 0.3 : 0.05
-        else
-          event = @queue.pop
+      queue = @queue
+      mutex = @mutex
+
+      thread = Thread.new do
+        loop do
+          wait_for_changes
+          event = queue.pop
           p [:queue, event]
-          @mutex.synchronize { @callbacks[event].call }
+          mutex.synchronize { @callbacks[event].call }
         end
       end
+      p thread
+      Thread.pass
+      sleep
     end
 
     attr_reader :status
