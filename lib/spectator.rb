@@ -56,13 +56,14 @@ module Spectator
 
       ui.on(:run_specs) do
         next unless ui.can_run_specs?
-
         ui.status = :running_specs
         files = path_watcher.pop_files
         specs = specs_matcher.specs_for(files)
-        result = ui.run spec_runner.command(specs)
-        success_notifier.notify(result)
-        ui.status = nil if ui.status == :running_specs
+        if specs.any?
+          result = ui.run spec_runner.command(specs)
+          success_notifier.notify(result)
+        end
+        ui.wait_for_changes
       end
 
       ui.on(:interrupt) do
