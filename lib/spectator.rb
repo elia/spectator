@@ -54,41 +54,44 @@ module Spectator
       path_watcher.on_change { ui << :run_specs }
       path_watcher.watch_paths!
 
-      ui.on(:run_specs) do
-        next unless ui.can_run_specs?
-        ui.status = :running_specs
-        files = path_watcher.pop_files
-        specs = specs_matcher.specs_for(files)
-        if specs.any?
-          result = ui.run spec_runner.command(specs)
-          success_notifier.notify(result)
-        end
-        ui.wait_for_changes
-      end
-
-      ui.on(:interrupt) do
-        puts ' (Interrupted with CTRL+C)'.red
-        p [ui.status, ui.interrupted_status]
-        case ui.interrupted_status
-        when :wait_for_input then ui.exit
-        when :running_specs  then ui.wait_for_changes
-        when :exiting        then Kernel.abort
-        else Thread.new { ui.ask_what_to_do }
-        end
-      end
+      ui.on(:run_all) { run_all_handler }
+      ui.on(:run_specs) { run_specs_handler }
+      ui.on(:interrupt) { interrupt_handler }
 
       trap('INT') { ui.interrupt! }
-
-      ui.on(:run_all) do
-        next unless ui.can_run_specs?
-
-        ui.status = :running_specs
-        result = ui.run(spec_runner.command)
-        success_notifier.notify(result)
-        ui.status = nil if ui.status == :running_specs
-      end
-
       ui.start
+    end
+
+    def run_all_handler
+      return unless ui.can_run_specs?
+
+      ui.status = :running_specs
+      result = ui.run(spec_runner.command)
+      success_notifier.notify(result)
+      ui.status = nil if ui.status == :running_specs
+    end
+
+    def run_specs_handler
+      return unless ui.can_run_specs?
+      ui.status = :running_specs
+      files = path_watcher.pop_files
+      specs = specs_matcher.specs_for(files)
+      if specs.any?
+        result = ui.run spec_runner.command(specs)
+        success_notifier.notify(result)
+      end
+      ui.wait_for_changes
+    end
+
+    def interrupt_handler
+      puts ' (Interrupted with CTRL+C)'.red
+      p [ui.status, ui.interrupted_status]
+      case ui.interrupted_status
+      when :wait_for_input then ui.exit
+      when :running_specs  then ui.wait_for_changes
+      when :exiting        then Kernel.abort
+      else Thread.new { ui.ask_what_to_do }
+      end
     end
   end
 
