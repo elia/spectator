@@ -1,6 +1,6 @@
 # Spectator
 
-[![Code Climate](https://codeclimate.com/github/elia/spectator.png)](https://codeclimate.com/github/elia/spectator)
+[![Code Climate](http://img.shields.io/codeclimate/github/kabisaict/flow.svg)](https://codeclimate.com/github/elia/spectator)
 
 _Test driven development red-green cycle for simple people!_
 
