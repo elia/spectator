@@ -1,13 +1,7 @@
 require 'spec_helper'
 require 'spectator'
 
-$spectator_debug = true
-
-describe Spectator do
-  it 'does something' do
-    #nope
-  end
-end
+# $spectator_debug = true
 
 describe Spectator::SpecRunner do
   let(:config) { Spectator.config }
@@ -18,5 +12,4 @@ describe Spectator::SpecRunner do
       expect(runner.default_files).to eq(['spec'])
     end
   end
-
 end
