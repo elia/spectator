@@ -97,8 +97,8 @@ module Spectator
     private
 
     def terminal_columns
-      cols = `stty -a 2>&1`.scan(/ (\d+) columns/).flatten.first
-      $?.success? ? cols.to_i : 80
+      cols = `tput cols 2> /dev/tty`.strip.to_i
+      ($?.success? && cols.nonzero?) ? cols : 80
     end
 
     def event_loop
