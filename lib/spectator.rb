@@ -54,7 +54,7 @@ module Spectator
       path_watcher.on_change { ui << :run_specs }
       path_watcher.watch_paths!
 
-      ui.on(:run_all) { run_all_handler }
+      ui.on(:run_all)   { run_all_handler }
       ui.on(:run_specs) { run_specs_handler }
       ui.on(:interrupt) { interrupt_handler }
 
@@ -64,11 +64,10 @@ module Spectator
 
     def run_all_handler
       return unless ui.can_run_specs?
-
       ui.status = :running_specs
       result = ui.run(spec_runner.command)
       success_notifier.notify(result)
-      ui.status = nil if ui.status == :running_specs
+      ui.wait_for_changes
     end
 
     def run_specs_handler
