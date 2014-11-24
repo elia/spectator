@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 
-usage = "Usage: spectator [yaml-config]"
+usage = "Usage: spectator [yaml-config] [ruby-script-file]"
 case ARGV.first
 when '-h'
   puts usage
@@ -24,6 +24,9 @@ config_file = ARGV.first || '.spectator'
 YAML.load_file(config_file).each do |name, value|
   ENV[name] ||= value
 end if File.exist? config_file
+
+script_file = ARGV[1] || '.spectator.rb'
+load script_file if File.exist? script_file
 
 config = Spectator.config(debug: ARGV.include?('--debug'))
 Spectator.run(config)
