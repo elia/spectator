@@ -113,4 +113,4 @@ end
 
 ## License
 
-Copyright © 2011-2012 Elia Schito, released under the [MIT license](https://github.com/elia/spectator/blob/master/MIT-LICENSE)
+Copyright © 2011-2014 Elia Schito, released under the [MIT license](https://github.com/elia/spectator/blob/master/MIT-LICENSE)
