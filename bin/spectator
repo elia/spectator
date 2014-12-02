@@ -24,7 +24,7 @@ require 'yaml'
 config_files = ARGV.empty? ? %w[.spectator .spectator.rb] : ARGV
 
 config_files.each do |config_file|
-  if config_file.ends_with?('.rb')
+  if config_file.end_with?('.rb')
     load config_file if File.exist? config_file
   else
     YAML.load_file(config_file).each do |name, value|
