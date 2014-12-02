@@ -34,7 +34,7 @@ Type `q` and `ENTER` (or `CTRL+C` again) to quit.
 Type `a` and `ENTER` (or `CTRL+C` again) to execute the whole suite of specs.
 
 
-## Advanced (upcoming!)
+## Advanced Configuration
 
 If you want to override some path matching:
 
