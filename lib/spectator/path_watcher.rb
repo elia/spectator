@@ -39,6 +39,11 @@ module Spectator
         listener = listener.filter %r{^(#{config.base_dir_regexp}|#{config.spec_dir_regexp})/}
         listener = listener.change do  |modified, added, removed|
           p ['modified, added, removed', modified, added, removed]
+
+          if added.any? or removed.any?
+            Spectator::SpecsMatcher.reset_matchable_spec_files!
+          end
+
           files = [modified, added].flatten
           files.each { |relative| queue.push relative }
           p on_change

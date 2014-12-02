@@ -29,10 +29,17 @@ module Spectator
     end
 
     def match_specs matchable_paths
-      matchable_paths.uniq.map do |path|
-        # Dir['**/**'].grep(%r{^#{config.spec_dir_regexp}}).grep(/\b#{path}((_spec)?\.rb)?$/)
-        Dir['**/**'].grep(%r{^#{config.spec_dir_regexp}}).grep(/\b#{path}_spec\.rb$/)
-      end.flatten
+      matchable_paths.uniq.flat_map do |path|
+        all_matchable_spec_files.grep(/\b#{path}_spec\.rb$/)
+      end
+    end
+
+    def all_matchable_spec_files
+      @@all_matchable_spec_files ||= Dir['**/**'].grep(%r{^#{config.spec_dir_regexp}})
+    end
+
+    def self.reset_matchable_spec_files!
+      @@all_matchable_spec_files = nil
     end
 
     attr_reader :config, :files
