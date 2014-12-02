@@ -20,13 +20,18 @@ end
 require 'spectator'
 
 require 'yaml'
-config_file = ARGV.first || '.spectator'
-YAML.load_file(config_file).each do |name, value|
-  ENV[name] ||= value
-end if File.exist? config_file
 
-script_file = ARGV[1] || '.spectator.rb'
-load script_file if File.exist? script_file
+config_files = ARGV.empty? ? %w[.spectator .spectator.rb] : ARGV
+
+config_files.each do |config_file|
+  if config_file.ends_with?('.rb')
+    load config_file if File.exist? config_file
+  else
+    YAML.load_file(config_file).each do |name, value|
+      ENV[name] ||= value
+    end if File.exist? config_file
+  end
+end
 
 config = Spectator.config(debug: ARGV.include?('--debug'))
 Spectator.run(config)
