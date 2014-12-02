@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 
-usage = "Usage: spectator [yaml-config] [ruby-script-file]"
+usage = "Usage: spectator [yaml-config|ruby-script-file|...]"
 case ARGV.first
 when '-h'
   puts usage
