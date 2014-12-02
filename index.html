@@ -18,7 +18,7 @@
 
       <header>
         <h1>Spectator</h1>
-        <p>Test driven development red-green cycle for simple people!</p>
+        <p>Test Driven Development red-green cycle for simple people!</p>
       </header>
 
       <div id="banner">
@@ -39,7 +39,8 @@
         <ul></ul>
       </nav>
       <section>
-        <h2>The gist</h2>
+        <h2>
+<a id="the-gist" class="anchor" href="#the-gist" aria-hidden="true"><span class="octicon octicon-link"></span></a>The gist</h2>
 
 <p>Spectator is a simple watcher for your specs:</p>
 
@@ -48,55 +49,115 @@
 <li>it <strong>does not</strong> starts your whole suite at start, nor when a spec passes or fails (as autospec tends to do)</li>
 <li>
 <em>if you ask</em> it runs the whole spec suite</li>
-</ul><blockquote>
+</ul>
+
+<blockquote>
 <p>Started as a custom <a href="https://github.com/mynyml/watchr">Watchr</a> script <strong>Spectator</strong> has grown up to a tiny gem!</p>
 </blockquote>
 
-<h3>Compatibility</h3>
+<h3>
+<a id="compatibility" class="anchor" href="#compatibility" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compatibility</h3>
 
 <p>Works with RSpec-1 and RSpec-2 (looks for a <code>.rspec</code> file in the project root).</p>
 
-<h2>Usage</h2>
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
 
 <p>Launch <code>spectator</code> in a terminal and go back to code!</p>
 
-<p>The normal behavior is similar to <code>autotest --fast-start --no-full-after-failed</code> 
+<p>The normal behavior is similar to <code>autotest --fast-start --no-full-after-failed</code>
 but gives the user a bit more control over execution. By hitting CTRL+C (or CMD+. on OSX)
 you get the following prompt:</p>
 
 <pre><code>^C (Interrupted with CTRL+C)
---- What to do now? (q=quit, a=all-specs): 
+--- What to do now? (q=quit, a=all-specs):
 </code></pre>
 
 <p>Type <code>q</code> and <code>ENTER</code> (or <code>CTRL+C</code> again) to quit.</p>
 
 <p>Type <code>a</code> and <code>ENTER</code> (or <code>CTRL+C</code> again) to execute the whole suite of specs.</p>
 
-<h2>Advanced (upcoming!)</h2>
+<h2>
+<a id="advanced-configuration" class="anchor" href="#advanced-configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advanced Configuration</h2>
 
 <p>If you want to override some path matching:</p>
 
-<div class="highlight">
-<pre><span class="n">spectate</span> <span class="k">do</span>
-  <span class="k">case</span> <span class="n">path</span>
-  <span class="k">when</span> <span class="sr">%r{lib/calibration_with_coefficients}</span>
-    <span class="n">specs</span><span class="o">.</span><span class="n">grep</span><span class="p">(</span><span class="sr">%r{models/(logarithmic|polynomial)_calibration}</span><span class="p">)</span>
-  <span class="k">when</span> <span class="sr">%r{app/models/telemetry_parameter}</span>
-    <span class="n">specs</span><span class="o">.</span><span class="n">grep</span><span class="p">(</span><span class="sr">%r{models/telemetry_parameter}</span><span class="p">)</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-</pre>
-</div>
+<p><strong><code>BASE_DIR_REGEXP</code>:</strong></p>
 
+<p>The glob that expanded will list the directories that contains the code. <strong>Default:</strong></p>
 
-<p>Copyright © 2011-2012 Elia Schito, released under the <a href="https://github.com/elia/spectator/blob/master/MIT-LICENSE">MIT license</a></p>
+<p><strong><code>SPEC_DIR_REGEXP</code>:</strong></p>
+
+<p>The glob that expanded will list the directories that contains the specs. <strong>Default:</strong></p>
+
+<p><strong><code>RSPEC_COMMAND</code>:</strong></p>
+
+<p>The full command that will run your specs. <strong>Default:</strong> <code>bundle exec rspec</code> (or <code>bundle exec spec</code> for RSpec 1.x)</p>
+
+<h3>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h3>
+
+<h4>
+<a id="inline-env-variables" class="anchor" href="#inline-env-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Inline ENV variables</h4>
+
+<div class="highlight highlight-shell"><pre><span class="pl-c"># this will match lib/opal/parser.rb to spec/cli/parser.rb</span>
+BASE_DIR_REGEXP=<span class="pl-s1"><span class="pl-pds">'</span>lib/opal<span class="pl-pds">'</span></span> SPEC_DIR_REGEXP=<span class="pl-s1"><span class="pl-pds">'</span>spec/cli<span class="pl-pds">'</span></span> spectator</pre></div>
+
+<h4>
+<a id="exported-env-variables" class="anchor" href="#exported-env-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exported ENV variables</h4>
+
+<div class="highlight highlight-shell"><pre>BASE_DIR_REGEXP: <span class="pl-s1"><span class="pl-pds">'</span>(?:opal/corelib|stdlib|spec)<span class="pl-pds">'</span></span>
+SPEC_DIR_REGEXP: <span class="pl-s1"><span class="pl-pds">'</span>(?:spec/corelib/core|spec/stdlib/\w+/spec)<span class="pl-pds">'</span></span>
+RSPEC_COMMAND: <span class="pl-s1"><span class="pl-pds">'</span>bundle exec ./bin/opal-mspec<span class="pl-pds">'</span></span>
+spectator</pre></div>
+
+<h4>
+<a id="with-a-spectator-config-file" class="anchor" href="#with-a-spectator-config-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>With a <code>.spectator</code> config file</h4>
+
+<div class="highlight highlight-yaml"><pre><span class="pl-c"># contents of ".spectator" file</span>
+<span class="pl-s1"><span class="pl-ent">BASE_DIR_REGEXP:</span> <span class="pl-s1"><span class="pl-pds">'</span>lib/opal<span class="pl-pds">'</span></span></span>
+<span class="pl-s1"><span class="pl-ent">SPEC_DIR_REGEXP:</span> <span class="pl-s1"><span class="pl-pds">'</span>spec/cli<span class="pl-pds">'</span></span></span></pre></div>
+
+<pre><code>spectator
+</code></pre>
+
+<h4>
+<a id="specifying-a-custom-config-file" class="anchor" href="#specifying-a-custom-config-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Specifying a custom config file</h4>
+
+<div class="highlight highlight-shell"><pre><span class="pl-c"># contents of ".my-spectator-config" file</span>
+BASE_DIR_REGEXP: <span class="pl-s1"><span class="pl-pds">'</span>lib/opal<span class="pl-pds">'</span></span>
+SPEC_DIR_REGEXP: <span class="pl-s1"><span class="pl-pds">'</span>spec/cli<span class="pl-pds">'</span></span></pre></div>
+
+<pre><code>spectator .my-spectator-config
+</code></pre>
+
+<h4>
+<a id="with-a-spectatorrb-script-file" class="anchor" href="#with-a-spectatorrb-script-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>With a <code>.spectator.rb</code> script file</h4>
+
+<div class="highlight highlight-ruby"><pre><span class="pl-c"># contents of ".spectator.rb" file</span>
+<span class="pl-k">module</span> <span class="pl-en">Spectator</span>
+  <span class="pl-k">class</span> <span class="pl-en">SuccessNotifier</span>
+    <span class="pl-k">def</span> <span class="pl-en">notify</span>(<span class="pl-vpf">success</span>)
+      fork { <span class="pl-s1"><span class="pl-pds">`</span>say <span class="pl-pse">#{</span><span class="pl-s2">say_message(success)</span><span class="pl-pse"><span class="pl-s2">}</span></span><span class="pl-pds">`</span></span>}
+    <span class="pl-k">end</span>
+
+    <span class="pl-k">def</span> <span class="pl-en">say_message</span>(<span class="pl-vpf">success</span>)
+      success <span class="pl-k">?</span> <span class="pl-s1"><span class="pl-pds">'</span>All right<span class="pl-pds">'</span></span> : <span class="pl-s1"><span class="pl-pds">'</span>Ouch<span class="pl-pds">'</span></span>
+    <span class="pl-k">end</span>
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span></pre></div>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Copyright © 2011-2014 Elia Schito, released under the <a href="https://github.com/elia/spectator/blob/master/MIT-LICENSE">MIT license</a></p>
       </section>
       <footer>
         <p>Project maintained by <a href="https://github.com/elia">elia</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
       </footer>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
