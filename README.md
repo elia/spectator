@@ -93,6 +93,23 @@ SPEC_DIR_REGEXP: 'spec/cli'
 
     spectator .my-spectator-config
 
+#### With a `.spectator.rb` script file
+
+```ruby
+# contents of ".spectator.rb" file
+module Spectator
+  class SuccessNotifier
+    def notify(success)
+      fork { `say #{say_message(success)}`}
+    end
+
+    def say_message(success)
+      success ? 'All right' : 'Ouch'
+    end
+  end
+end
+```
+
 
 ## License
 
