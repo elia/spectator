@@ -17,8 +17,6 @@ when '--help', 'help'
   exit
 end
 
-require 'spectator'
-
 require 'yaml'
 
 config_files = ARGV.empty? ? %w[.spectator .spectator.rb] : ARGV
@@ -33,5 +31,6 @@ config_files.each do |config_file|
   end
 end
 
+require 'spectator'
 config = Spectator.config(debug: ARGV.include?('--debug'))
 Spectator.run(config)
