@@ -72,35 +72,22 @@ spectator
 ```
 
 
-#### With a `.spectator` config file
-
-```yaml
-# contents of ".spectator" file
-BASE_DIR_REGEXP: 'lib/opal'
-SPEC_DIR_REGEXP: 'spec/cli'
-```
-
-    spectator
-
-
-#### Specifying a custom config file
-
-```shell
-# contents of ".my-spectator-config" file
-BASE_DIR_REGEXP: 'lib/opal'
-SPEC_DIR_REGEXP: 'spec/cli'
-```
-
-    spectator .my-spectator-config
-
 #### With a `.spectator.rb` script file
 
 ```ruby
 # contents of ".spectator.rb" file
+
+ENV['BASE_DIR_REGEXP']  = '(?:opal/corelib|stdlib|spec)'
+ENV['SPEC_DIR_REGEXP:'] = '(?:spec/corelib/core|spec/stdlib/\w+/spec)'
+ENV['RSPEC_COMMAND']    = 'bundle exec ./bin/opal-mspec'
+
+require 'spectator/success_notifier'
+
 module Spectator
   class SuccessNotifier
     def notify(success)
-      fork { `say #{say_message(success)}`}
+      fork { exec "say #{say_message(success)}" }
+      super
     end
 
     def say_message(success)
