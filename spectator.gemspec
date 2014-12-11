@@ -6,7 +6,7 @@ require 'spectator/version'
 Gem::Specification.new do |s|
   s.name        = 'spectator'
   s.version     = Spectator::VERSION
-  s.authors     = %w[Elia Schito]
+  s.authors     = ['Elia Schito']
   s.email       = %w[elia@schito.me]
   s.homepage    = ''
   s.summary     = %q{Watches specs for a Ruby or Rails project}
