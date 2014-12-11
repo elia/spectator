@@ -74,6 +74,9 @@ spectator
 
 #### With a `.spectator.rb` script file
 
+This file can be present in each project folder or in your home directory if you want to share general settings.
+When files are present in both folders the one in the home directory will be loaded first.
+
 ```ruby
 # contents of ".spectator.rb" file
 
